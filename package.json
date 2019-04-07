@@ -1,0 +1,32 @@
+{
+  "name": "typeables",
+  "version": "0.0.0",
+  "description": "Little runtime JSONSchema+TypeScript types",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crdrost/typeables.git"
+  },
+  "keywords": [
+    "types",
+    "jsonschema",
+    "typescript"
+  ],
+  "author": "CR Drost <c.r.drost@gmail.com>",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/crdrost/typeables/issues"
+  },
+  "homepage": "https://github.com/crdrost/typeables#readme",
+  "devDependencies": {
+    "prettier": "^1.16.4",
+    "typescript": "^3.4.1"
+  },
+  "dependencies": {
+    "jsonschema": "^1.2.4"
+  }
+}
