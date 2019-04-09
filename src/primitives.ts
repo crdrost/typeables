@@ -1,4 +1,4 @@
-import { Typeable } from './typeable';
+import { Typeable, TSchema } from './typeable';
 import { randUnicode, unUnicode } from './lib/rand-unicode';
 import { shrinkList } from './lib/shrink-list';
 import { isDigit, isSpace, isLower, isUpper } from './lib/string-regexes';
@@ -43,7 +43,9 @@ const charShrinkCandidates = 'abcABC123 \n'
 
 /**
  * Create a typeable for strings. We do not expose the regex string of JSONSchema because we do not have an engine which
- * will reverse-engineer a regex into a fuzzer.
+ * will reverse-engineer a regex into a fuzzer. I may change the ascii boolean flag into a 
+ * string flag `{type: 'ascii' | 'hex' | 'unicode'}` or so.
+ * 
  * @param opts.minLength - The JSONSchema minimum length
  * @param opts.maxLength - The JSONSchema maximum length
  * @param opts.ascii - Set to true to restrict a string to the ASCII subset, else the generator will generate interesting Unicode strings, too.
@@ -61,6 +63,18 @@ export function text(
     throw new TypeError(
       'Tried to create a typeables.text with maxLength < minLength'
     );
+  }
+  const schema: TSchema = {
+    type: ['string']
+  };
+  if (opts.minLength !== undefined) {
+    schema.minLength = opts.minLength;
+  }
+  if (opts.maxLength !== undefined) {
+    schema.maxLength = opts.maxLength;
+  }
+  if (opts.ascii !== undefined) {
+    schema.pattern = '^[\u0000-\u007f]*$';
   }
   return {
     arbitrary(size) {
@@ -112,12 +126,7 @@ export function text(
         yield option.join('');
       }
     },
-    schema: {
-      type: ['string'],
-      minLength: opts.minLength,
-      maxLength: opts.maxLength,
-      pattern: opts.ascii ? '^[\u0000-\u007f]*$' : undefined
-    }
+    schema
   };
 }
 /**
@@ -168,6 +177,15 @@ export function num(
     }
     return [min, max];
   }
+  const schema: TSchema = {
+      type: [opts.integer ? 'integer': 'number']
+  };
+  if (opts.min !== undefined) {
+  schema.minimum = opts.min;  
+  }
+  if (opts.max !== undefined) {
+    schema.maximum = opts.max;
+  }
   return {
     arbitrary(size) {
       const [lo, hi] = bounds(size);
@@ -202,10 +220,6 @@ export function num(
         }
       }
     },
-    schema: {
-      type: [opts.integer ? 'integer' : 'number'],
-      minimum: opts.min,
-      maximum: opts.max
-    }
+    schema
   };
 }
