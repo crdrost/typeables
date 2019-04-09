@@ -1,0 +1,5 @@
+src
+.prettierrc
+jest.config.js
+tsconfig.json
+*.tgz
