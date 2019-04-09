@@ -47,10 +47,6 @@ export function list<t>(typeable: Typeable<t>): Typeable<t[]> {
   };
 }
 
-type PropsObj<props extends Record<string, Typeable<any>>> = {
-  [k in keyof props]: ValueOf<props[k]>
-};
-
 /**
  * Derive a typeable for objects with specific properties, from a dictionary
  * mapping property names to the typeables of their values.
@@ -59,7 +55,7 @@ type PropsObj<props extends Record<string, Typeable<any>>> = {
  */
 export function object<props extends Record<string, Typeable<any>>>(
   props: props
-): Typeable<PropsObj<props>> {
+): Typeable<{ [k in keyof props]: ValueOf<props[k]> }> {
   const propertySchemas = {} as Record<string, Schema>;
   const propNames = Object.keys(props);
   for (const name of propNames) {
@@ -67,7 +63,7 @@ export function object<props extends Record<string, Typeable<any>>>(
   }
   return {
     arbitrary(size) {
-      const out = {} as PropsObj<props>;
+      const out = {} as {[k in keyof props]: ValueOf<props[k]> };
       for (const name of propNames) {
         out[name] = props[name].arbitrary(size);
       }
